@@ -13,75 +13,56 @@
 
 package b2s.compare.clipboard;
 
-import java.awt.Dialog;
-import java.awt.Frame;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.io.StringReader;
-import javax.swing.text.JTextComponent;
-import org.netbeans.api.diff.Diff;
 import org.netbeans.api.diff.DiffView;
-import org.netbeans.api.diff.StreamSource;
-import org.netbeans.api.editor.EditorRegistry;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 import org.openide.cookies.EditorCookie;
-import org.openide.util.Lookup;
-import org.openide.windows.WindowManager;
 
 public final class CompareWithClipboardAction implements ActionListener {
-
+    private SourceRetriever editorSelectedSourceRetriever;
     private final EditorCookie context;
+    private SourceRetriever clipboardRetriever;
+    private DialogDisplayer dialogDisplayer;
+    private TextDiffer textDiffer;
 
     public CompareWithClipboardAction(EditorCookie context) {
         this.context = context;
+        editorSelectedSourceRetriever = new EditorSelectedSourceRetriever();
+        clipboardRetriever = new ClipboardSourceRetriever();
+        dialogDisplayer = new DialogDisplayer();
+        textDiffer = new TextDiffer();
     }
 
     public void actionPerformed(ActionEvent ev) {
-        JTextComponent comp = EditorRegistry.lastFocusedComponent();
-        String text = comp.getSelectedText();
-        boolean hasTextSelected = text != null && text.trim().length() > 0;
-
-        Clipboard clipboard = Lookup.getDefault().lookup(Clipboard.class);
-        Transferable contents = clipboard.getContents(null);
-        boolean hasTextInClipboard = (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor);
-        if ( hasTextInClipboard && hasTextSelected ) {
-          try {
-            StreamSource selectedText = toStreamSource("Selected Text", comp.getSelectedText());
-            StreamSource clipboardContents = toStreamSource("Clipboard Contents", (String)contents.getTransferData(DataFlavor.stringFlavor));
-            DiffView view = Diff.getDefault().createDiff(selectedText, clipboardContents);
-
-            DialogDescriptor descriptor = new DialogDescriptor(
-                    view.getComponent(),
-                    "Compare to Clipboard",
-                    true,
-                    new Object[]{DialogDescriptor.OK_OPTION},
-                    DialogDescriptor.OK_OPTION,
-                    DialogDescriptor.DEFAULT_ALIGN,
-                    null,
-                    null
-            );
-            Frame window = WindowManager.getDefault().getMainWindow();
-
-            Dialog dialog = DialogDisplayer.getDefault().createDialog(descriptor);
-            dialog.setSize(640, 480);
-            dialog.setLocationRelativeTo(window);
-            dialog.setVisible(true);
-          } catch (UnsupportedFlavorException ex){
-            ex.printStackTrace();
-          } catch (IOException ex) {
-            ex.printStackTrace();
-          }
+        String editor = editorSelectedSourceRetriever.retrieve();
+        String clipboard = clipboardRetriever.retrieve();
+        if (hasText(editor) && hasText(clipboard)) {
+            if (editor.equals(clipboard)) {
+                dialogDisplayer.noDifferences();
+            } else {
+                DiffView diffView = textDiffer.diff(editor, clipboard);
+                dialogDisplayer.showDifferences(diffView);
+            }
         }
-
     }
 
-    private StreamSource toStreamSource(String title, String contents) {
-        return StreamSource.createSource(title, title, "text/plain", new StringReader(contents));
+    private boolean hasText(String text) {
+        return text != null && text.trim().length() > 0;
+    }
+
+    void setEditorSourceRetriever(SourceRetriever editorSelectedSourceRetriever) {
+        this.editorSelectedSourceRetriever = editorSelectedSourceRetriever;
+    }
+
+    void setClipboardSourceRetriever(SourceRetriever clipboardRetriever) {
+        this.clipboardRetriever = clipboardRetriever;
+    }
+
+    void setDialogDisplayer(DialogDisplayer dialogDisplayer) {
+        this.dialogDisplayer = dialogDisplayer;
+    }
+
+    void setTextDiffer(TextDiffer textDiffer) {
+        this.textDiffer = textDiffer;
     }
 }
