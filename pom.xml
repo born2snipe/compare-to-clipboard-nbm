@@ -91,6 +91,8 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>${artifactId}</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
