@@ -33,7 +33,7 @@
         <folder name="Popup">
             <file name="b2s-compare-clipboard-CompareWithClipboardAction.shadow">
                 <attr name="originalFile" stringvalue="Actions/Edit/b2s-compare-clipboard-CompareWithClipboardAction.instance"/>
-                <attr name="position" intvalue="900"/>
+                <attr name="position" intvalue="10000"/>
             </file>
         </folder>
     </folder>

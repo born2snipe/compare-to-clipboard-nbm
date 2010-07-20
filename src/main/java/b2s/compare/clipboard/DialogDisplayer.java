@@ -17,34 +17,18 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import org.netbeans.api.diff.DiffView;
 import org.openide.DialogDescriptor;
+import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
 public class DialogDisplayer {
+
     public void noDifferences() {
-        DialogDescriptor descriptor = new DialogDescriptor(
-                "Contents are identical",
-                "Compare to Clipboard",
-                true,
-                new Object[]{DialogDescriptor.OK_OPTION},
-                DialogDescriptor.OK_OPTION,
-                DialogDescriptor.DEFAULT_ALIGN,
-                null,
-                null
-        );
+        DialogDescriptor descriptor = dialogDescriptor(NbBundle.getMessage(DialogDisplayer.class, "content.identical"));
         org.openide.DialogDisplayer.getDefault().notify(descriptor);
     }
 
     public void showDifferences(DiffView diffView) {
-        DialogDescriptor descriptor = new DialogDescriptor(
-                diffView.getComponent(),
-                "Compare to Clipboard",
-                true,
-                new Object[]{DialogDescriptor.OK_OPTION},
-                DialogDescriptor.OK_OPTION,
-                DialogDescriptor.DEFAULT_ALIGN,
-                null,
-                null
-        );
+        DialogDescriptor descriptor = dialogDescriptor(diffView.getComponent());
         Frame window = WindowManager.getDefault().getMainWindow();
 
         Dialog dialog = org.openide.DialogDisplayer.getDefault().createDialog(descriptor);
@@ -52,4 +36,18 @@ public class DialogDisplayer {
         dialog.setLocationRelativeTo(window);
         dialog.setVisible(true);
     }
+
+    private DialogDescriptor dialogDescriptor(Object message) {
+        return new DialogDescriptor(
+                message,
+                NbBundle.getMessage(DialogDisplayer.class, "diff.dialog.title"),
+                true,
+                new Object[]{DialogDescriptor.OK_OPTION},
+                DialogDescriptor.OK_OPTION,
+                DialogDescriptor.DEFAULT_ALIGN,
+                null,
+                null
+        );
+    }
+
 }
