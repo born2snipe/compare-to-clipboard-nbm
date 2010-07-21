@@ -3,7 +3,7 @@
     <groupId>b2s</groupId>
     <artifactId>compare-with-clipboard</artifactId>
     <packaging>nbm</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.2</version>
     <name>Compare with Clipboard</name>
 
     <description>
