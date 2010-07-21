@@ -15,18 +15,17 @@ package b2s.compare.clipboard;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.List;
 import org.netbeans.api.diff.DiffView;
 import org.openide.cookies.EditorCookie;
 
 public final class CompareWithClipboardAction implements ActionListener {
     private SourceRetriever editorSelectedSourceRetriever;
-    private final EditorCookie context;
     private SourceRetriever clipboardRetriever;
     private DialogDisplayer dialogDisplayer;
     private TextDiffer textDiffer;
 
-    public CompareWithClipboardAction(EditorCookie context) {
-        this.context = context;
+    public CompareWithClipboardAction(List<EditorCookie> context) {
         editorSelectedSourceRetriever = new EditorSelectedSourceRetriever();
         clipboardRetriever = new ClipboardSourceRetriever();
         dialogDisplayer = new DialogDisplayer();
