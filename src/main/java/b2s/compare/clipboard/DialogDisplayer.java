@@ -13,14 +13,18 @@
 
 package b2s.compare.clipboard;
 
+import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Frame;
+import javax.swing.JPanel;
 import org.netbeans.api.diff.DiffView;
 import org.openide.DialogDescriptor;
 import org.openide.util.NbBundle;
 import org.openide.windows.WindowManager;
 
 public class DialogDisplayer {
+    private static final DiffPanel diffPanel = new DiffPanel();
+    private static Dialog dialog;
 
     public void noDifferences() {
         DialogDescriptor descriptor = dialogDescriptor(NbBundle.getMessage(DialogDisplayer.class, "content.identical"));
@@ -28,11 +32,14 @@ public class DialogDisplayer {
     }
 
     public void showDifferences(DiffView diffView) {
-        DialogDescriptor descriptor = dialogDescriptor(diffView.getComponent());
         Frame window = WindowManager.getDefault().getMainWindow();
 
-        Dialog dialog = org.openide.DialogDisplayer.getDefault().createDialog(descriptor);
-        dialog.setSize(640, 480);
+        if (dialog == null) {
+            DialogDescriptor descriptor = dialogDescriptor(diffPanel);
+            dialog = org.openide.DialogDisplayer.getDefault().createDialog(descriptor);
+            dialog.setSize(640, 480);
+        }
+        diffPanel.setDiffView(diffView);
         dialog.setLocationRelativeTo(window);
         dialog.setVisible(true);
     }
@@ -50,4 +57,14 @@ public class DialogDisplayer {
         );
     }
 
+    private static class DiffPanel extends JPanel {
+        public DiffPanel() {
+            super(new BorderLayout());
+        }
+
+        public void setDiffView(DiffView diffView) {
+            removeAll();
+            add(diffView.getComponent(), BorderLayout.CENTER);
+        }
+    }
 }
