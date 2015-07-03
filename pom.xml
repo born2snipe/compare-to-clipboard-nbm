@@ -11,7 +11,7 @@
     <groupId>b2s</groupId>
     <artifactId>compare-with-clipboard</artifactId>
     <packaging>nbm</packaging>
-    <version>0.5</version>
+    <version>0.6-SNAPSHOT</version>
     <name>Compare with Clipboard</name>
 
     <description>
@@ -91,7 +91,7 @@
         <developerConnection>scm:git:git@github.com:born2snipe/compare-to-clipboard-nbm.git</developerConnection>
         <connection>scm:git:git@github.com:born2snipe/compare-to-clipboard-nbm.git</connection>
         <url>git@github.com:born2snipe/compare-to-clipboard-nbm.git</url>
-        <tag>0.5</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
